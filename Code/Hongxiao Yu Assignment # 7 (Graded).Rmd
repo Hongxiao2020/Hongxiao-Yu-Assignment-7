@@ -1,0 +1,55 @@
+---
+title: 'Hongxiao Yu Assignment # 7'
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+# Assignment 7 
+# Author: Hongxiao Yu
+# Date: 31 March 2020
+
+
+*** Number 1
+x = explanatory variable
+y = response variable
+p = pth largest residuals
+p.residual = model y as a linear function of x and then for each (x, y) pair determine if the residual is one of the p largest in the set of residuals
+```{r}
+p_residual <- function(x, y, p) {
+  liner_model <- lm(y ~ x)
+  abs_residuals <- abs(liner_model$residuals)
+  sort_abs_residuals <- sort(abs_residuals, decreasing = TRUE)
+  pth_largest <- sort_abs_residuals[p]
+  compare_rp <- (abs_residuals >= pth_largest)
+  return(compare_rp)
+}
+```
+
+*** Number 2
+
+*Notice in the scatterplot below that you aren't actually showing the largest*
+*residuals. That's because you plotted math as the response variable, but you*
+*sent it to your function as the explanatory variable.* (-2)
+
+```{r}
+library(here)
+hsb2 <- read.csv(here("Data", "hsb2.csv"))
+
+# the number of the 10% largest residuals 
+0.1*(nrow(hsb2))
+
+# scatterplot with a regression line
+model <- lm(hsb2$math ~ hsb2$science)
+p_residual <- p_residual(hsb2$math, hsb2$science, 20)
+plot(hsb2$read, hsb2$write,
+     main = "scatterplot with a regression line",
+     xlab = "Standardized Science Score",
+     ylab = " Standardized Math Score",
+     col = ifelse(p_residual == TRUE, "blue", "black"))
+abline(model)
+
+```
+
+
+
